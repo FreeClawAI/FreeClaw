@@ -40,7 +40,8 @@ const Sender = {
 
         var editor = this._findEditor();
         if (editor) {
-            editor.value = msg;
+            var old = editor.value;
+            editor.value = old ? old + '\n\n' + msg : msg;
             editor.dispatchEvent(new Event('input', { bubbles: true }));
             editor.focus();
         }

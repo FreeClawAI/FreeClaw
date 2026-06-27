@@ -86,16 +86,16 @@ const SaveDialog = {
 
         // 工作目录选择栏
         html += '<div style="display:flex;align-items:center;gap:8px;padding:6px 0;margin-bottom:6px">';
-        html += '<span style="font-size:12px;color:#666;white-space:nowrap">' + I18n.t('Work Directory') + ':</span>';
-        html += '<span id="aiSaveWorkDir" style="flex:1;font-size:12px;background:white;padding:3px 8px;border:1px solid #ddd;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + Utils.esc(Config.mainDir) + '</span>';
-        html += '<button id="aiSaveChangeDir" style="padding:3px 8px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer;font-size:12px">📁</button>';
+        html += '<span style="font-size:12px;color:#666;white-space:nowrap;forced-color-adjust:none;-webkit-text-fill-color:#666">' + I18n.t('Work Directory') + ':</span>';
+        html += '<span id="aiSaveWorkDir" style="flex:1;font-size:12px;background:white;padding:3px 8px;border:1px solid #ddd;border-radius:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">' + Utils.esc(Config.mainDir) + '</span>';
+        html += '<button id="aiSaveChangeDir" style="padding:3px 8px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer;font-size:12px;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">📁</button>';
         html += '</div>';
 
         html += '<div style="display:flex;align-items:center;padding:6px 0;border-bottom:2px solid #ddd;font-size:12px;color:#666;font-weight:bold">';
         html += '<span style="width:28px"></span>';
-        html += '<span style="flex:1">' + I18n.t('File') + '</span>';
-        html += '<span style="width:70px;text-align:right">' + I18n.t('Size') + '</span>';
-        html += '<span style="flex:1;padding-left:8px">' + I18n.t('Save to') + '</span>';
+        html += '<span style="flex:1;forced-color-adjust:none;-webkit-text-fill-color:#666">' + I18n.t('File') + '</span>';
+        html += '<span style="width:70px;text-align:right;forced-color-adjust:none;-webkit-text-fill-color:#666">' + I18n.t('Size') + '</span>';
+        html += '<span style="flex:1;padding-left:8px;forced-color-adjust:none;-webkit-text-fill-color:#666">' + I18n.t('Save to') + '</span>';
         html += '<span style="width:120px"></span>';
         html += '</div>';
         html += '<div style="max-height:350px;overflow:auto" id="aiSaveFileList">';
@@ -104,24 +104,24 @@ const SaveDialog = {
             var saveToDisplay = formatDisplayPath(item.workDir, item.name);
             html += '<div class="ai-save-row" data-index="' + index + '" style="display:flex;align-items:center;padding:6px 0;border-bottom:1px solid #f0f0f0" title="' + Utils.escAttr(item._origName) + '&#10;' + Utils.escAttr(item.savePath) + '">';
             html += '<span style="width:28px"><input type="checkbox" class="ai-save-check" data-index="' + index + '" checked></span>';
-            html += '<span class="ai-save-file-col" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + Utils.esc(fileDisplay) + '</span>';
-            html += '<span style="width:70px;text-align:right;font-size:11px;color:#999">' + formatSizeForList(item.size) + '</span>';
-            html += '<span class="ai-save-path" style="flex:1;padding-left:8px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#333">' + Utils.esc(saveToDisplay) + '</span>';
+            html += '<span class="ai-save-file-col" style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">' + Utils.esc(fileDisplay) + '</span>';
+            html += '<span style="width:70px;text-align:right;font-size:11px;color:#999;forced-color-adjust:none;-webkit-text-fill-color:#999">' + formatSizeForList(item.size) + '</span>';
+            html += '<span class="ai-save-path" style="flex:1;padding-left:8px;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#333;forced-color-adjust:none;-webkit-text-fill-color:#333">' + Utils.esc(saveToDisplay) + '</span>';
             html += '<span style="width:120px;text-align:center">';
-            html += '<button class="ai-save-diff-btn" data-index="' + index + '" style="font-size:11px;padding:2px 8px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer;margin-right:4px">' + I18n.t('View Diff') + '</button>';
-            html += '<button class="ai-save-browse-btn" data-index="' + index + '" style="font-size:11px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer">📁</button>';
+            html += '<button class="ai-save-diff-btn" data-index="' + index + '" style="font-size:11px;padding:2px 8px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer;margin-right:4px;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">' + I18n.t('View Diff') + '</button>';
+            html += '<button class="ai-save-browse-btn" data-index="' + index + '" style="font-size:11px;padding:2px 6px;border:1px solid #ccc;border-radius:3px;background:white;cursor:pointer;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">📁</button>';
             html += '</span></div>';
         });
         html += '</div>';
         html += '<div style="padding:8px 0;border-top:1px solid #eee;display:flex;align-items:center;gap:12px;font-size:12px;color:#666">';
-        html += '<label style="cursor:pointer"><input type="checkbox" id="aiSaveSelectAll" checked> ' + I18n.t('All') + '</label>';
-        html += '<span id="aiSaveSelectedCount">' + fileItems.length + ' ' + I18n.t('files selected') + ' / ' + fileItems.length + ' ' + I18n.t('total') + '</span>';
-        html += '<span style="font-size:11px;color:#999;margin-left:auto">' + I18n.t('Only work directories can be selected') + '</span>';
+        html += '<label style="cursor:pointer;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333"><input type="checkbox" id="aiSaveSelectAll" checked> ' + I18n.t('All') + '</label>';
+        html += '<span id="aiSaveSelectedCount" style="forced-color-adjust:none;color:#666;-webkit-text-fill-color:#666">' + fileItems.length + ' ' + I18n.t('files selected') + ' / ' + fileItems.length + ' ' + I18n.t('total') + '</span>';
+        html += '<span style="font-size:11px;color:#999;margin-left:auto;forced-color-adjust:none;-webkit-text-fill-color:#999">' + I18n.t('Only work directories can be selected') + '</span>';
         html += '</div>';
         html += '<div class="ai-dialog-footer">';
-        html += '<button id="aiSaveCancel" style="width:70px;height:30px">' + I18n.t('Cancel') + '</button>';
-        html += '<button id="aiSaveSendProtocol" style="background:#17a2b8;color:white;border:none;width:70px;height:30px">' + I18n.t('Protocol') + '</button>';
-        html += '<button id="aiSaveConfirm" style="background:#007bff;color:white;border:none;width:70px;height:30px">' + I18n.t('Save') + '</button>';
+        html += '<button id="aiSaveCancel" style="width:70px;height:30px;forced-color-adjust:none;color:#333;-webkit-text-fill-color:#333">' + I18n.t('Cancel') + '</button>';
+        html += '<button id="aiSaveSendProtocol" style="background:#17a2b8;color:white;border:none;width:70px;height:30px;forced-color-adjust:none;-webkit-text-fill-color:white">' + I18n.t('Protocol') + '</button>';
+        html += '<button id="aiSaveConfirm" style="background:#007bff;color:white;border:none;width:70px;height:30px;forced-color-adjust:none;-webkit-text-fill-color:white">' + I18n.t('Save') + '</button>';
         html += '</div>';
 
         var self = this;

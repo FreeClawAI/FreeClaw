@@ -17,7 +17,8 @@ const SendDialog = {
             '<div style="padding:8px 0;font-size:12px;color:#666"><span id="aiSendInfo">0 / 100K</span></div>';
 
         DialogStack.show('send', {
-            title: null, body: body,
+            title: I18n.t('File List'),
+            body: body,
             buttons: [
                 { text: I18n.t('Send'), id: 'aiSendSend', primary: true, onClick: function() { DialogStack.close(); self._doSend(); }},
                 { text: I18n.t('Cancel'), id: 'aiSendCancel', onClick: function() { DialogStack.close(); } }
