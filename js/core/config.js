@@ -1,7 +1,7 @@
 // FreeClaw - Plugin configuration management
 const Config = {
     _defaults: {
-        // serverUrl: 'http://localhost:18080',
+        serverUrl: 'http://localhost:18080',
         workDirs: [],
         lastSaveDir: '',
         formatTabWidth: 4
@@ -9,8 +9,13 @@ const Config = {
     _data: {},
 
     async load() {
-        const result = await chrome.storage.local.get('fcConfig');
-        this._data = Object.assign({}, this._defaults, result.fcConfig || {});
+        try {
+            const result = await chrome.storage.local.get('fcConfig');
+            this._data = Object.assign({}, this._defaults, result.fcConfig || {});
+        } catch (e) {
+            console.error('FreeClaw: Failed to load config', e);
+            this._data = Object.assign({}, this._defaults);
+        }
     },
 
     async save() {
@@ -18,17 +23,21 @@ const Config = {
     },
 
     get serverUrl() {
-        // return this._data.serverUrl;
-        return 'http://localhost:18080';
+        return this._data.serverUrl || 'http://localhost:18080';
     },
 
-    // set serverUrl(v) {
-    //     this._data.serverUrl = v;
-    //     this.save();
-    // },
+    set serverUrl(v) {
+        this._data.serverUrl = v;
+        this.save();
+    },
 
     get workDirs() {
         return this._data.workDirs || [];
+    },
+
+    set workDirs(v) {
+        this._data.workDirs = v;
+        this.save();
     },
 
     get mainDir() {

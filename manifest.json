@@ -9,7 +9,7 @@
     "128": "icons/icon128.png"
   },
   "permissions": ["storage", "scripting", "activeTab"],
-  "host_permissions": ["http://127.0.0.1:8080/*", "http://localhost:8080/*"],
+  "host_permissions": ["http://127.0.0.1:18080/*", "http://localhost:18080/*"],
   "content_scripts": [{
     "matches": [
       "https://chat.deepseek.com/*",
@@ -54,6 +54,7 @@
       "js/ui/quick-msg.js",
       "js/ui/ai-sites-dialog.js",
       "js/ui/code-folder.js",
+      "js/ui/user-folder.js",
       "js/ui/quick-file-tree.js",
       "js/input/keyboard.js",
       "js/input/dnd.js",

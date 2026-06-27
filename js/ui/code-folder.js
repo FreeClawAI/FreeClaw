@@ -1,32 +1,45 @@
 // FreeClaw - Code block fold / unfold
 const CodeFolder = {
-    _timer: null,
+    _observer: null,
+    _boundBlocks: new WeakSet(),
 
     start: function() {
-        if (this._timer) return;
-        this._timer = setInterval(function() {
-            document.querySelectorAll('.md-code-block').forEach(function(block) {
-                if (block._fcFoldBound) return;
-                block._fcFoldBound = true;
-                var banner = block.querySelector('.md-code-block-banner');
-                if (!banner) return;
-                banner.style.cursor = 'pointer';
-                banner.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    var pre = block.querySelector('pre');
-                    if (!pre) return;
-                    if (pre.style.display === 'none') {
-                        pre.style.display = '';
-                    } else {
-                        pre.style.display = 'none';
-                    }
-                });
+        if (this._observer) return;
+        this._bindAll();
+        this._observer = new MutationObserver(() => {
+            this._bindAll();
+        });
+        this._observer.observe(document.body, {
+            childList: true,
+            subtree: true
+        });
+    },
+
+    _bindAll: function() {
+        const self = this;
+        document.querySelectorAll('.md-code-block').forEach(function(block) {
+            if (self._boundBlocks.has(block)) return;
+            self._boundBlocks.add(block);
+            const banner = block.querySelector('.md-code-block-banner');
+            if (!banner) return;
+            banner.style.cursor = 'pointer';
+            banner.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const pre = block.querySelector('pre');
+                if (!pre) return;
+                if (pre.style.display === 'none') {
+                    pre.style.display = '';
+                } else {
+                    pre.style.display = 'none';
+                }
             });
-        }, 2000);
+        });
     },
 
     stop: function() {
-        clearInterval(this._timer);
-        this._timer = null;
+        if (this._observer) {
+            this._observer.disconnect();
+            this._observer = null;
+        }
     }
 };
