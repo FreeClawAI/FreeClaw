@@ -12,9 +12,10 @@ const Sites = {
                     var text = (el.textContent || '').trim();
                     var m = text.match(/([a-zA-Z0-9_\-\.\/]+\.\w{1,6})\s*$/);
                     if (m && m[1].indexOf('.') > 0) {
-                        var ext = m[1].split('.').pop().toLowerCase();
-                        var validExts = ['cs','js','html','css','json','txt','py','java','ts','tsx','jsx','md','xml','yaml','yml','sql','sh','bat','cmd'];
-                        if (validExts.indexOf(ext) >= 0) return m[1];
+                        // var ext = m[1].split('.').pop().toLowerCase();
+                        // var validExts = ['cs','js','html','css','json','txt','py','java','ts','tsx','jsx','md','xml','yaml','yml','sql','sh','bat','cmd'];
+                        // if (validExts.indexOf(ext) >= 0) 
+                        return m[1];
                     }
                     el = el.previousElementSibling;
                 }

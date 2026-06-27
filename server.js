@@ -6,7 +6,7 @@ const os = require('os');
 const crypto = require('crypto');
 const child_process = require('child_process');
 
-const PORT = 8080;
+const PORT = 18080;
 const documentsDir = path.join(os.homedir(), 'Documents');
 const WORKSPACE_DIR = path.join(
     fs.existsSync(documentsDir) ? documentsDir : os.homedir(),
