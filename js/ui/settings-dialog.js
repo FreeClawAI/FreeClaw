@@ -3,14 +3,14 @@ const SettingsDialog = {
     _dirs: [],
 
     show: async function() {
-        var currentUrl = Config.serverUrl || 'http://localhost:18080';
+        var currentUrl = Config.serverUrl || 'http://localhost:8080';
         this._dirs = (Config.workDirs && Config.workDirs.slice) ? Config.workDirs.slice() : [];
         try {
             var controller = new AbortController();
             var timeout = setTimeout(function() { controller.abort(); }, 3000);
             var j = await Api.configDirs(this._dirs);
             clearTimeout(timeout);
-            if (j.success && j.dirs) { this._dirs = j.dirs; Config.workDirs = j.dirs; await Config.save(); }
+            if (j.success && j.dirs) { this._dirs = j.dirs; Config._data.workDirs = j.dirs; await Config.save(); }
         } catch (e) {}
         this._render(currentUrl);
         this._testConn();
@@ -18,7 +18,7 @@ const SettingsDialog = {
 
     _render: function(serverUrl) {
         var self = this;
-        var currentUrl = serverUrl || Config.serverUrl || 'http://localhost:18080';
+        var currentUrl = serverUrl || Config.serverUrl || 'http://localhost:8080';
 
         var mainDir = this._dirs[0] || '';
         var sorted = [mainDir];
@@ -55,16 +55,7 @@ const SettingsDialog = {
             title: I18n.t('Local File Service'),
             body: body,
             buttons: [
-                { text: I18n.t('Confirm'), id: 'aiCfgClose', primary: true, onClick: async function() {
-                    var serverInput = document.getElementById('aiCfgServer');
-                    if (serverInput) {
-                        Config.serverUrl = serverInput.value.trim();
-                    }
-                    DialogStack.closeAll();
-                    await FileService.refresh();
-                    FileTree.render();
-                    FileTree.initEvents();
-                }}
+                { text: I18n.t('Confirm'), id: 'aiCfgClose', primary: true, onClick: function() { DialogStack.closeAll(); } }
             ],
             onRender: function() {
                 document.getElementById('aiCfgTestConn').onclick = function() { self._testConn(); };
@@ -73,7 +64,7 @@ const SettingsDialog = {
                         if (!connected) { Toast.show(I18n.t('Cannot connect. Start node server.js'), 'error'); return; }
                         DirPicker.show(Config.mainDir, function(selectedPath) {
                             self._addDirByPath(selectedPath).then(function() {
-                                self._render(Config.serverUrl);
+                                self._render(currentUrl);
                             });
                         });
                     });
@@ -83,30 +74,24 @@ const SettingsDialog = {
                         var idx = parseInt(this.dataset.idx);
                         var dir = self._dirs.splice(idx, 1)[0];
                         self._dirs.unshift(dir);
-                        Config.workDirs = self._dirs.slice();
+                        Config._data.workDirs = self._dirs.slice();
                         await Config.save();
-                        await FileService.refresh();
-                        FileTree.render();
-                        FileTree.initEvents();
-                        self._render(Config.serverUrl);
+                        self._render(currentUrl);
                     };
                 });
                 document.querySelectorAll('.ai-del-dir').forEach(function(btn) {
                     btn.onclick = async function() {
                         var idx = parseInt(this.dataset.idx);
                         self._dirs.splice(idx, 1);
-                        Config.workDirs = self._dirs.slice();
+                        Config._data.workDirs = self._dirs.slice();
                         await Config.save();
                         if (!self._dirs.length) {
                             try {
                                 var j = await Api.configDirs([]);
-                                if (j.success && j.dirs) { self._dirs = j.dirs; Config.workDirs = j.dirs; await Config.save(); }
+                                if (j.success && j.dirs) { self._dirs = j.dirs; Config._data.workDirs = j.dirs; await Config.save(); }
                             } catch (e) {}
                         }
-                        await FileService.refresh();
-                        FileTree.render();
-                        FileTree.initEvents();
-                        self._render(Config.serverUrl);
+                        self._render(currentUrl);
                     };
                 });
             }
@@ -121,11 +106,8 @@ const SettingsDialog = {
             var j = await Api.configDirs(allDirs);
             if (j.success) {
                 this._dirs = j.dirs;
-                Config.workDirs = j.dirs;
+                Config._data.workDirs = j.dirs;
                 await Config.save();
-                await FileService.refresh();
-                FileTree.render();
-                FileTree.initEvents();
                 Toast.show(I18n.t('✅ Added'));
             } else {
                 Toast.show(I18n.t('❌ Cannot access this directory'), 'error');
@@ -139,21 +121,12 @@ const SettingsDialog = {
         var url = document.getElementById('aiCfgServer');
         var status = document.getElementById('aiCfgConnStatus');
         if (!url || !status) return false;
-        var testUrl = url.value.trim();
+        url = url.value.trim();
         status.textContent = I18n.t('Testing...'); status.style.color = '#666';
         try {
-            var r = await fetch(testUrl + '/api/ping');
-            if (r.ok) {
-                Config.serverUrl = testUrl;
-                status.textContent = I18n.t('✅ Connected'); status.style.color = '#28a745';
-                return true;
-            } else {
-                status.textContent = I18n.t('❌ HTTP {0}', r.status); status.style.color = '#dc3545';
-                return false;
-            }
-        } catch (e) {
-            status.textContent = I18n.t('❌ Cannot connect'); status.style.color = '#dc3545';
-            return false;
-        }
+            var connected = await Api.ping();
+            if (connected) { status.textContent = I18n.t('✅ Connected'); status.style.color = '#28a745'; return true; }
+            else { status.textContent = I18n.t('❌ Cannot connect'); status.style.color = '#dc3545'; return false; }
+        } catch (e) { status.textContent = I18n.t('❌ Cannot connect'); status.style.color = '#dc3545'; return false; }
     }
 };

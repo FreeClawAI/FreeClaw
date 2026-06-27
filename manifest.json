@@ -37,6 +37,7 @@
       "js/services/formatter.js",
       "js/services/quick-save.js",
       "js/services/send-btn.js",
+      "js/services/send-files-btn.js",
       "js/ui/dialog.js",
       "js/ui/toast.js",
       "js/ui/panel.js",
